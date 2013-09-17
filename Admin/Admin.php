@@ -23,6 +23,7 @@ use Symfony\Component\Security\Acl\Model\DomainObjectInterface;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
+use Sonata\AdminBundle\Export\ExportMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 
 use Sonata\AdminBundle\Admin\Pool;
@@ -494,14 +495,27 @@ abstract class Admin implements AdminInterface, DomainObjectInterface
         );
     }
 
+    public function configureExportFields($mapper)
+	{
+		
+	}
+	
     /**
      * @return array
-     */
+     */ 
     public function getExportFields()
     {
-        return $this->getModelManager()->getExportFields($this->getClass());
+    	$mapper = new ExportMapper($this->getDatagridBuilder(), $this);
+    	$this->configureExportFields($mapper);
+		$fields = $mapper->getFields();
+	
+		if (count($fields)) {
+			return $fields;
+		}
+		
+		return $this->getModelManager()->getExportFields($this->getClass());
     }
-
+     
     /**
      * @return
      */
